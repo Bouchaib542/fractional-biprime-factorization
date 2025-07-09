@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fractional Biprime Factorization</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 40px;
+      background-color: #f7f7f7;
+    }
+    input {
+      padding: 10px;
+      width: 300px;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin-left: 10px;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <h1>Fractional Biprime Factorization</h1>
+  <p>Enter an odd biprime number (e.g., 143 = 11 × 13)</p>
+  <input type="text" id="inputNumber" placeholder="Enter odd biprime number">
+  <button onclick="factorize()">Find Prime Factor</button>
+  <div id="result"></div>
+
+  <script>
+    function isPrime(n) {
+      if (n < 2) return false;
+      if (n === 2) return true;
+      if (n % 2 === 0) return false;
+      for (let i = 3; i * i <= n; i += 2) {
+        if (n % i === 0) return false;
+      }
+      return true;
+    }
+
+    function factorize() {
+      const input = document.getElementById('inputNumber').value.trim();
+      const O = BigInt(input);
+      const resultDiv = document.getElementById('result');
+      resultDiv.textContent = "Searching...";
+
+      const maxX = 1000n;
+      const powersOfTwo = [4n, 8n, 16n, 32n, 64n];
+
+      for (let i = 1n; i <= maxX; i++) {
+        for (let d of [25n, 75n]) {
+          const denom = i * 100n + d;  // e.g., 125 = 1.25
+          const numerator = O * 100n;
+          if (numerator % denom !== 0n) continue;
+          const Q = numerator / denom;
+
+          for (let p of powersOfTwo) {
+            if (Q % p === 0n) {
+              const candidate = Q / p;
+              const other = O / candidate;
+              if (isPrime(Number(candidate)) && isPrime(Number(other))) {
+                resultDiv.textContent = `Prime factors found: ${candidate} × ${other}`;
+                return;
+              }
+            }
+          }
+        }
+      }
+
+      resultDiv.textContent = "No prime factor found using this method.";
+    }
+  </script>
+</body>
+</html>
